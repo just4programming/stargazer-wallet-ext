@@ -17,6 +17,7 @@ import { useController, useSettingsView } from 'hooks/index';
 import { MAIN_VIEW } from '../routes';
 import LedgerIcon from 'assets/images/svg/ledger.svg';
 import styles from './index.scss';
+import { browser } from 'webextension-polyfill-ts';
 
 function isValidJsonPrivateKey(jKey: any) {
   const params = jKey && jKey.crypto && jKey.crypto.kdfparams;
@@ -77,6 +78,10 @@ const ImportAccountView: FC = () => {
         setLoading(false);
         setAccountName(undefined);
       });
+  };
+
+  const openHardwareWalletPage = () => {
+    browser.tabs.create({ url: 'hardware.html' });
   };
 
   const loadHardwareList = () => {
@@ -230,7 +235,10 @@ const ImportAccountView: FC = () => {
                   <>
                     <span>Please select your Hardware device:</span>
                     <div className={styles.hardwareList}>
-                      <div className={styles.walletModel}>
+                      <div
+                        className={styles.walletModel}
+                        onClick={openHardwareWalletPage}
+                      >
                         <img src={LedgerIcon} alt="ledger_icon" />
                       </div>
                     </div>

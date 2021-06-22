@@ -12,6 +12,7 @@
     "noResolve": false,
     "resolveJsonModule": true,
     "baseUrl": ".",
+    "types": ["chrome"],
     "paths": {
       "assets/*": ["./source/assets/*"],
       "components/*": ["./source/components/*"],
