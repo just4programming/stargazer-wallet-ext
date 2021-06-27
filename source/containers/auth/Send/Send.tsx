@@ -179,8 +179,8 @@ const WalletSend: FC<IWalletSend> = ({ initAddress = '' }) => {
     }
     controller.wallet.account.getLatestGasPrices().then((gas) => {
       setGasPrices(gas);
-      setCurrentGas(tempTx?.ethConfig?.gas || gas[1]);
-      estimateGasFee(gas[1]);
+      setCurrentGas(gas[2]);
+      estimateGasFee(gas[2]);
     });
   };
 
@@ -189,15 +189,15 @@ const WalletSend: FC<IWalletSend> = ({ initAddress = '' }) => {
     setModalOpen(false);
   };
 
-  const handleGasSettings = () => {
-    controller.wallet.account.updateTempTx({
-      ...tempTx,
-      fromAddress: '',
-      toAddress: address || '',
-      amount: Number(amount),
-    });
-    history.push('/gas-settings');
-  };
+  // const handleGasSettings = () => {
+  //   controller.wallet.account.updateTempTx({
+  //     ...tempTx,
+  //     fromAddress: '',
+  //     toAddress: address || '',
+  //     amount: Number(amount),
+  //   });
+  //   history.push('/gas-settings');
+  // };
 
   const handleSetMax = () => {
     const balance = balances[activeAsset.id] || 0;
@@ -310,7 +310,7 @@ const WalletSend: FC<IWalletSend> = ({ initAddress = '' }) => {
           </ul>
           <div className={styles.status}>
             <span className={styles.equalAmount}>
-              ≈ {getFiatAmount(Number(amount) + Number(fee), 6)}
+              ≈ {getFiatAmount(Number(amount) + Number(fee), 2)}
             </span>
             {!!Object.values(errors).length && (
               <span className={styles.error}>
@@ -375,7 +375,7 @@ const WalletSend: FC<IWalletSend> = ({ initAddress = '' }) => {
             <div className={styles.status}>
               <span
                 className={styles.equalAmount}
-              >{`${currentGas} GWei, ${gasFee} ETH (≈ ${getFiatAmount(
+              >{`${currentGas} GWei (≈ ${getFiatAmount(
                 gasFee,
                 2,
                 'ethereum'
