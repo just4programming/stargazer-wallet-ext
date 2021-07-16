@@ -3,7 +3,8 @@ import React, { FC } from 'react';
 import clsx from 'clsx';
 import styles from './index.scss';
 
-import PACKAGE from '../../../../../../manifest.json';
+// import PACKAGE from '../../../../../../manifest.json';
+const PACKAGE = { version: '1.3.2' };
 
 function majorMinor (version: string) {
   const v = version.split('.');
