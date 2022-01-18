@@ -182,6 +182,7 @@ const SelectAccounts = () => {
 
     return (
       <div id={'selectAccounts-accountList'} key={wallet.id} className={styles.walletItem}>
+        <div id={'selectAccounts-checkedWallets'} className={styles.walletItemCheckBox}>
           <PurpleCheckbox
             onChange={(e: any) => onCheckboxChange(e.target.checked, wallet)}
             checked={(selectedWallets.filter((selectedWallet) => wallet.id === selectedWallet.id).length > 0)}
