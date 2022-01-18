@@ -94,8 +94,14 @@ const SelectAccounts = () => {
   useEffect(() => {
     const { network } = queryString.parse(location.search);
     
+    //test
+    console.log(network as string);
+    
     setNetwork(network as string);
     setWallets(allWallets);
+    
+    //test
+    console.log(setWallets);
   }, []);
 
   ///////////////////////////
@@ -151,9 +157,15 @@ const SelectAccounts = () => {
     // Add the account address to the white list.
     if (checked) {
       setSelectedWallets([...selectedWallets, wallet]);
+
+      //test
+      console.log(setSelectedWallets);
     } else {
       const wallets = selectedWallets.filter((selectedWallet: any) => wallet.id !== selectedWallet.id);
       setSelectedWallets(wallets);
+
+      //test
+      console.log(wallets);
     }
   }
 
@@ -171,13 +183,22 @@ const SelectAccounts = () => {
     if (wallet.type === KeyringWalletType.SingleAccountWallet && wallet.supportedAssets[0] === 'DAG') {
       icon = ConstellationIcon
       symbolText = 'DAG';
+      
+      //test
+      console.log("added dag wallet");
     } else if (wallet.type === KeyringWalletType.SingleAccountWallet && wallet.supportedAssets[0] === 'ETH') {
       icon = EthereumIcon;
       symbolText = 'ETH';
+
+      //test
+      console.log("added eth wallet");
     } else {
       icon = StargazerIcon;
       symbolText = 'Multi Chain Wallet'
       iconStyle = styles.iconPurple;
+
+      //test
+      console.log("added multichain wallet");
     }
 
     return (
