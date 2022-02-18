@@ -5,7 +5,7 @@ import {NativeBaseProvider} from 'native-base';
 import RootStack from 'navigation/stacks/Root';
 import linking from 'navigation/linking';
 import Store from 'state/store';
-import { STORE_PORT, DAG_NETWORK } from 'constants/index';
+import { DAG_NETWORK } from 'constants/index';
 import {Provider} from 'react-redux';
 import FlashMessage from 'react-native-flash-message';
 import { dag4 } from '@stardust-collective/dag4';
