@@ -9,6 +9,7 @@ const path = require('path');
 const nodeModules = require('node-libs-react-native');
 
 const extraNodeModules = {
+  crypto: path.resolve('./shims/crypto'),
   source: path.resolve(__dirname + '/../'),
   navigation: path.resolve(__dirname + '/../navigation'),
   scenes: path.resolve(__dirname + '/../scenes'),
@@ -22,7 +23,6 @@ const extraNodeModules = {
   assets: path.resolve(__dirname + '/../assets'),
   scripts: path.resolve(__dirname + '/../scripts'),
   process: nodeModules.process,
-  crypto: nodeModules.crypto,
   stream: nodeModules.stream,
   http: nodeModules.http,
   https: nodeModules.https,

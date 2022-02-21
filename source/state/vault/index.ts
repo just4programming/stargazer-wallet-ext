@@ -6,12 +6,12 @@ import { DAG_NETWORK, ETH_NETWORK } from 'constants/index';
 import { KeyringNetwork, KeyringVaultState } from '@stardust-collective/dag4-keyring';
 import IVaultState, { AssetBalances, AssetType, IAssetState, IWalletState } from './types';
 
-const hasEncryptedVault = !!localStorage.getItem('stargazer-vault');
+// const hasEncryptedVault = !!localStorage.getItem('stargazer-vault');
 
 const initialState: IVaultState = {
   status: 0,
   wallets: [],
-  hasEncryptedVault,
+  hasEncryptedVault: false,
   balances: {
     [AssetType.Constellation]: '0',
     [AssetType.Ethereum]: '0',
