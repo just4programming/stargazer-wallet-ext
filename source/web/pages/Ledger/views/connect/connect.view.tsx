@@ -2,7 +2,7 @@
 // Module Imports
 /////////////////////////
 
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles'
 
 /////////////////////////
@@ -34,14 +34,14 @@ const BUTTON_VARIANT_PROP = 'contained';
 const BUTTON_COLOR_PROP = 'primary';
 const BUTTON_CUSTOM_COLOR_PROP = '#521e8a';
 // Strings
-const CONNECT_TO_LEDGER_STRING = 'Connect to Ledger';
+const CONNECT_TO_LEDGER_STRING = 'Connect to Bitfi';
 
 /////////////////////////
 // Interface
 /////////////////////////
 
 interface IConnectProps {
-  onConnectClick: React.MouseEventHandler<HTMLButtonElement>
+  onConnectClick: (deviceId: string) => void
 }
 
 /////////////////////////
@@ -50,17 +50,28 @@ interface IConnectProps {
 
 function Connect(props: IConnectProps) {
 
-
+  const [deviceId, setDeviceId] = useState<string>('')
+  const [error, setError] = useState<string>('')
   /////////////////////////
   // Callbacks
   /////////////////////////
 
-  const onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-
-    if (props.onConnectClick) {
-      props.onConnectClick(event);
+  const onClick = () => {
+    try {
+      if (Buffer.from(deviceId, 'hex').length !== 3) {
+        throw new Error('Invalid device ID')
+      }
+  
+      if (props.onConnectClick) {
+        props.onConnectClick(deviceId);
+      }
+  
     }
-
+    catch (exc) {
+      //@ts-ignore
+      setError(JSON.stringify(exc.message ||exc))
+    }
+    
   };
 
   /////////////////////////
@@ -81,11 +92,19 @@ function Connect(props: IConnectProps) {
     <div className={styles.content}>
       <div className={styles.wrapper}>
         <div className={styles.instructions}>
-          <img src={LedgerIcon} alt="ledger_icon" width={183} height={45} />
-          <span>
-            Connect your hardware device and click the <br/>"Connect to Ledger" button below.
+          <h2 style={{ marginBottom: '15px' }}>Bitfi signin</h2>
+          <span style={{ marginBottom: '15px', paddingTop: '0px', fontSize: '15px' }}>
+            Connect your hardware device and click the <br/>"Connect to Bitfi" button below.
           </span>
+          <input
+            style={{ height: '30px', width: '100px', textAlign: 'center' }}
+            value={deviceId} 
+            onChange={(e) => setDeviceId(e.target.value)} 
+            placeholder='FFFFFF'
+          />
         </div>
+        
+        {error}
         <div>
           <BlueButton
             style={{textTransform: 'none'}}

@@ -5,7 +5,7 @@
 import React, { FC, useState, useEffect} from 'react';
 import { LedgerAccount } from '@stardust-collective/dag4-ledger';
 import { makeStyles } from '@material-ui/core/styles'
-import { LedgerBridgeUtil } from '../../utils/ledgerBridge';
+//import { LedgerBridgeUtil } from '../../utils/ledgerBridge';
 import queryString from 'query-string';
 import _ from 'lodash';
 
@@ -20,7 +20,7 @@ import { Header, AlertBar } from './components';
 // View Imports
 /////////////////////////
 
-import ConnectView from './views/connect';
+import ConnectView, { ConnectBitfiView } from './views/connect';
 import FetchingProgressView from './views/fetchingProgress';
 import AccountsView from './views/accounts';
 import SignView from './views/sign';
@@ -34,7 +34,9 @@ import 'assets/styles/global.scss';
 import { Color } from '@material-ui/lab/Alert';
 import { browser } from 'webextension-polyfill-ts';
 import { dag4 } from '@stardust-collective/dag4';
+import BitfiBridgeUtil from '../../utils/bitfiBridge';
 
+const LedgerBridgeUtil = BitfiBridgeUtil
 /////////////////////////
 // Constants
 /////////////////////////
@@ -72,6 +74,8 @@ enum WALLET_STATE_ENUM {
   SENDING,
   SUCCESS,
   SIGN,
+
+  BITFI_SIGNIN
 }
 
 enum PAGING_ACTIONS_ENUM {
@@ -118,7 +122,11 @@ const LedgerPage: FC = () => {
   const [startIndex, setStartIndex] = useState<number>(0);
   const [waitingForLedger, setWaitingForLedger] = useState<boolean>(false);
   const [transactionSigned, setTransactionSigned] = useState<boolean>(false);
+  
 
+  const [message, setMessage] = useState<string>('')
+  const [code, setCode] = useState<string>('')
+  const [error, setError] = useState<string>('')
 
   useEffect(() => {}, [selectedAccounts])
 
@@ -201,18 +209,23 @@ const LedgerPage: FC = () => {
   }
 
   // Handles the click to the Connect with Ledger Button
-  const onConnectClick = async () => {
-    // Close any open alerts
-    setOpenAlert(false);
+  
+  const onConnectClick = async (deviceId: string) => {
+    try {
+      // Close any open alerts
+      //setOpenAlert(false);
 
-    // Request permission to access the ledger device.
-    await LedgerBridgeUtil.requestPermissions();
+      // Request permission to access the ledger device.
+      setWalletState(WALLET_STATE_ENUM.BITFI_SIGNIN)
+      await LedgerBridgeUtil.requestPermissions(deviceId, setMessage, setCode)
 
-    // Update the view state to fetching accounts
-    setWalletState(WALLET_STATE_ENUM.FETCHING);
-
-    // Get the initial page of the account data
-    await getAccountData(PAGING_ACTIONS_ENUM.INITIAL);
+      // Get the initial page of the account data
+      await getAccountData(PAGING_ACTIONS_ENUM.INITIAL);
+    }
+    catch (exc) {
+      //@ts-ignore
+      setError(JSON.stringify(exc.message || exc))
+    }
   }
 
   // Updates the alert bar state
@@ -288,7 +301,6 @@ const LedgerPage: FC = () => {
   }
 
   const onSignPress = async () => {
-
     const {
       amount,
       publicKey,
@@ -301,6 +313,7 @@ const LedgerPage: FC = () => {
       setWaitingForLedger(true);
       await LedgerBridgeUtil.requestPermissions();
       const signedTX = await LedgerBridgeUtil.buildTransaction(amount, publicKey, Number(id.replace('L','')), from, to);
+
       const hash = await dag4.network.loadBalancerApi.postTransaction(signedTX);
       if (hash) {
         postTransactionResult(hash);
@@ -320,7 +333,21 @@ const LedgerPage: FC = () => {
   /////////////////////////
 
   function RenderByWalletState() {
-    if (walletState === WALLET_STATE_ENUM.LOCKED) {
+
+    if (walletState === WALLET_STATE_ENUM.BITFI_SIGNIN) {
+      return (
+        <>
+          <ConnectBitfiView 
+            message={message} 
+            error={error} 
+            code={code} 
+            onBack={() => setWalletState(WALLET_STATE_ENUM.LOCKED)}
+          />
+        </>
+      )
+    } 
+    else if (walletState === WALLET_STATE_ENUM.LOCKED) {
+      
       return (
         <>
           <ConnectView onConnectClick={onConnectClick} />

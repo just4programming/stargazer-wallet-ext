@@ -25,6 +25,7 @@
     "postinstall": "npx patch-package"
   },
   "dependencies": {
+    "@bitfi/dag4-bitfi": "^0.0.8",
     "@devneser/gradient-avatar": "^1.1.1",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
@@ -38,9 +39,9 @@
     "@stardust-collective/dag4-keyring": "^0.0.13",
     "@stardust-collective/dag4-ledger": "^0.0.12",
     "@stardust-collective/dag4-xchain-ethereum": "^0.1.14",
+    "@types/react-redux": "^7.1.9",
     "@types/redux-logger": "^3.0.8",
     "@types/redux-watch": "^1.1.0",
-    "@types/react-redux": "^7.1.9",
     "eth-data-decoder": "^0.0.2",
     "ethereum-input-data-decoder": "^0.3.5",
     "ethers": "^5.0.32",
