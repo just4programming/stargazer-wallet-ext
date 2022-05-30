@@ -157,6 +157,13 @@ class BitfiBridgeUtil {
     
   };
 
+  public async signMessage(msg: string) {
+    
+    const sig = await this.bitfiBridge.signMessagePrefixed(msg)
+
+    return sig;
+  }
+
   //not used
   public setOnProgressUpdate(onProgressUpdate: (progress: number) => void) {
   }
