@@ -76,7 +76,8 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.gray_light_100,
   },
   assetIcon: {
-    color: COLORS.gray_light_100,
+    height: 24,
+    width: 24,
   },
   icon: {
     fontSize: 24,
@@ -128,6 +129,16 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     color: COLORS.gray_100,
+  },
+  walletInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  walletLabelContainer: {
+    justifyContent: 'flex-end',
+  },
+  walletInfoIcon: {
+    flex: 1,
   },
 });
 

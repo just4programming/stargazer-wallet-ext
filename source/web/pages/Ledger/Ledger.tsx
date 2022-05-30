@@ -24,7 +24,8 @@ import ConnectView, { ConnectBitfiView } from './views/connect';
 import FetchingProgressView from './views/fetchingProgress';
 import AccountsView from './views/accounts';
 import SignView from './views/sign';
-import ImportSuccess from './views/importSuccess'
+import ImportSuccess from './views/importSuccess';
+import MessageSigning from './views/messageSigning';
 
 /////////////////////////
 // Styles
@@ -42,6 +43,11 @@ const LedgerBridgeUtil = BitfiBridgeUtil
 /////////////////////////
 
 // Strings
+const ROUTES = {
+  SIGN_TRANSACTION: 'signTransaction',
+  SIGN_MESSAGE: 'signMessage',
+}
+
 const LEDGER_ERROR_STRINGS = {
   CONNECTION_CANCELED: 'Cannot read property',
   APP_CLOSED: '6E01',
@@ -74,8 +80,8 @@ enum WALLET_STATE_ENUM {
   SENDING,
   SUCCESS,
   SIGN,
-
   BITFI_SIGNIN
+  MESSAGE_SIGNING,
 }
 
 enum PAGING_ACTIONS_ENUM {
@@ -137,11 +143,13 @@ const LedgerPage: FC = () => {
   useEffect(() => {
 
     const {
-      walletState,
+      route,
     } = queryString.parse(location.search);
 
-    if (walletState === 'sign') {
+    if (route === ROUTES.SIGN_TRANSACTION) {
       setWalletState(WALLET_STATE_ENUM.SIGN);
+    }else if(route === ROUTES.SIGN_MESSAGE){
+      setWalletState(WALLET_STATE_ENUM.MESSAGE_SIGNING);
     }
 
   }, []);
@@ -328,6 +336,45 @@ const LedgerPage: FC = () => {
     }
   }
 
+  const onSignMessagePress = async () => {
+
+    const {
+      data,
+      windowId
+    } = queryString.parse(location.search) as any;
+
+    const jsonData  = JSON.parse(data);
+    const message   = jsonData.signatureRequestEncoded;
+    const walletId  = jsonData.walletId;
+    const publicKey = jsonData.publicKey;
+    const background = await browser.runtime.getBackgroundPage();
+    
+    try{
+      setWaitingForLedger(true);
+      await LedgerBridgeUtil.requestPermissions();
+      const signature = await LedgerBridgeUtil.signMessage(message, Number(walletId.replace('L','')));
+      LedgerBridgeUtil.closeConnection();
+      const signatureEvent = new CustomEvent('messageSigned', {
+        detail: {
+          windowId, result: true, signature: {
+            hex: {
+              signature,
+              publicKey,
+            },
+            requestEncoded: message,
+          }
+        }
+      });
+  
+      background.dispatchEvent(signatureEvent);
+      window.close();
+    } catch(e) {
+      console.log('error', JSON.stringify(e,null,2));
+      setWaitingForLedger(false);
+      LedgerBridgeUtil.closeConnection();
+    }
+  }
+
   /////////////////////////
   // Renders
   /////////////////////////
@@ -403,6 +450,28 @@ const LedgerPage: FC = () => {
          />
         </>
       );
+    }else if( walletState === WALLET_STATE_ENUM.MESSAGE_SIGNING){
+
+      const {
+        data,
+      } = queryString.parse(location.search) as any;
+
+      const parsedData = JSON.parse(data);
+      const message = JSON.parse(atob(parsedData.signatureRequestEncoded));
+
+      return (
+        <>
+          <MessageSigning 
+            walletLabel={parsedData.walletLabel} 
+            message={message}
+            waiting={waitingForLedger}
+            onSignMessagePress={onSignMessagePress} 
+            messageSigned={transactionSigned}
+          />
+        </>
+      )
+
+
     }
 
     return null;
