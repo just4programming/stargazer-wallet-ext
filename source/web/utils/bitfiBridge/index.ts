@@ -80,11 +80,12 @@ class BitfiBridgeUtil {
 
   // not used
   public closeConnection = () => {
+    this.bitfiBridge = null
   };   
   
   // Should be use when deleting the wallet
   public logOut = () => {
-    this.bitfiBridge = undefined
+    this.bitfiBridge = null
     localStorage.removeItem(DEVICE_ID_KEY)
     localStorage.removeItem(SESSION_KEY)
   }
@@ -100,8 +101,10 @@ class BitfiBridgeUtil {
       onMessage(`Open your wallet, click on "Private Channels" button and then enter your salt and secret phrase to start a session`)
       
       await this.bitfiBridge.enable(CONNECT_TIMEOUT_MSEC)
+      
+      
       await this.bitfiBridge.authorize(code => {
-        onMessage(checkCodeMessage(code))
+        onMessage(`Authorization: ${checkCodeMessage(code)}`)
       }, APPROVE_TIMEOUT_MSEC)
       
       const dump = await this.bitfiBridge.serialize()
