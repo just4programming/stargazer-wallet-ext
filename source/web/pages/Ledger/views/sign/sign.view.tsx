@@ -28,6 +28,7 @@ import 'assets/styles/global.scss';
 interface ISignViewProps {
   amount: string,
   fee: string,
+  statusMessage: string,
   fromAddress: string,
   toAddress: string,
   waiting: boolean,
@@ -46,7 +47,8 @@ const SignView = ({
   toAddress,
   waiting,
   transactionSigned,
-  onSignPress
+  onSignPress,
+  statusMessage
 }: ISignViewProps) => {
 
   const getFiatAmount = useFiat();
@@ -129,7 +131,10 @@ const SignView = ({
                 <CircularProgress />
               </div>
               <div>
-                <span>Waiting For Ledger</span>
+                <span>Waiting For Bitfi</span>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <span>{statusMessage}</span>
               </div>
             </div>
           </div>

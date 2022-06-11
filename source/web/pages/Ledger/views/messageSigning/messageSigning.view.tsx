@@ -31,6 +31,7 @@ interface IMessageSignViewProps {
   waiting: boolean,
   // transactionSigned: boolean
   messageSigned: boolean,
+  statusMessage: string,
   walletLabel: string,
   message: {
     content: string,
@@ -56,6 +57,7 @@ const SignMessageView = ({
   messageSigned,
   walletLabel,
   message,
+  statusMessage,
   onSignMessagePress
 }: IMessageSignViewProps) => {
 
@@ -117,7 +119,10 @@ const SignMessageView = ({
                 <CircularProgress />
               </div>
               <div>
-                <span>Waiting For Ledger</span>
+                <span>Waiting For Bitfi</span>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <span>{statusMessage}</span>
               </div>
             </div>
           </div>

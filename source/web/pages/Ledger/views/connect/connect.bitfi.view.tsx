@@ -12,11 +12,11 @@ const BUTTON_CUSTOM_COLOR_PROP = '#521e8a';
 interface IConnectProps {
   message: string,
   error: string,
-  code: string,
+  //code: string,
   onBack: () => void
 }
 
-function ConnectBitfiView({ onBack, message, error, code }: IConnectProps) {
+function ConnectBitfiView({ onBack, message, error }: IConnectProps) {
   const BlueButton = withStyles((theme) => ({
     root: {
       color: theme.palette.getContrastText(BUTTON_CUSTOM_COLOR_PROP),
@@ -32,12 +32,10 @@ function ConnectBitfiView({ onBack, message, error, code }: IConnectProps) {
         <div className={styles.wrapper}>
           <div className={styles.instructions}>
             <h2 style={{ marginBottom: '15px' }}>Bitfi signin</h2>
-            <span style={{ marginBottom: '15px', paddingTop: '0px', fontSize: '15px' }}>
+            <span style={{ marginBottom: '15px', paddingTop: '0px', fontSize: '20px' }}>
               {message}
             </span>
-            <span style={{ fontSize: '20px' }}>Please, make sure the code below matches what's displayed on your device</span>
-            <h2 style={{ marginBottom: '15px' }}>{code}</h2>
-            
+             
           </div>
 
           {error}

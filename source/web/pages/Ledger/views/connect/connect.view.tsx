@@ -34,7 +34,7 @@ const BUTTON_VARIANT_PROP = 'contained';
 const BUTTON_COLOR_PROP = 'primary';
 const BUTTON_CUSTOM_COLOR_PROP = '#521e8a';
 // Strings
-const CONNECT_TO_LEDGER_STRING = 'Connect to Bitfi';
+const CONNECT_TO_LEDGER_STRING = 'Connect';
 
 /////////////////////////
 // Interface
@@ -92,9 +92,9 @@ function Connect(props: IConnectProps) {
     <div className={styles.content}>
       <div className={styles.wrapper}>
         <div className={styles.instructions}>
-          <h2 style={{ marginBottom: '15px' }}>Bitfi signin</h2>
+          <h2 style={{ marginBottom: '15px' }}>Bitfi Connect</h2>
           <span style={{ marginBottom: '15px', paddingTop: '0px', fontSize: '15px' }}>
-            Connect your hardware device and click the <br/>"Connect to Bitfi" button below.
+            Enter your Bitfi device ID and then click on the "Connect" button below
           </span>
           <input
             style={{ height: '30px', width: '100px', textAlign: 'center' }}

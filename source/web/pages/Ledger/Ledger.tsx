@@ -36,6 +36,7 @@ import { Color } from '@material-ui/lab/Alert';
 import { browser } from 'webextension-polyfill-ts';
 import { dag4 } from '@stardust-collective/dag4';
 import BitfiBridgeUtil from '../../utils/bitfiBridge';
+import { DeviceError } from '@bitfi/bitfi.js';
 
 const LedgerBridgeUtil = BitfiBridgeUtil
 /////////////////////////
@@ -130,6 +131,7 @@ const LedgerPage: FC = () => {
   const [transactionSigned, setTransactionSigned] = useState<boolean>(false);
   
 
+  const [statusMessage, setStatusMessage] = useState<string>('')
   const [message, setMessage] = useState<string>('')
   const [code, setCode] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -220,19 +222,24 @@ const LedgerPage: FC = () => {
   
   const onConnectClick = async (deviceId: string) => {
     try {
+      setError(null)
       // Close any open alerts
       //setOpenAlert(false);
 
       // Request permission to access the ledger device.
       setWalletState(WALLET_STATE_ENUM.BITFI_SIGNIN)
-      await LedgerBridgeUtil.requestPermissions(deviceId, setMessage, setCode)
+      await LedgerBridgeUtil.requestPermissions(deviceId, setMessage)
 
       // Get the initial page of the account data
       await getAccountData(PAGING_ACTIONS_ENUM.INITIAL);
     }
     catch (exc) {
-      //@ts-ignore
-      setError(JSON.stringify(exc.message || exc))
+      if (exc instanceof DeviceError) {
+        setError(`Device error: ${exc.message}`)
+      } else {
+        setError(JSON.stringify(exc))
+      }
+      
     }
   }
 
@@ -319,7 +326,7 @@ const LedgerPage: FC = () => {
 
     try{
       setWaitingForLedger(true);
-      await LedgerBridgeUtil.requestPermissions();
+      await LedgerBridgeUtil.requestPermissions(undefined, setStatusMessage);
       const signedTX = await LedgerBridgeUtil.buildTransaction(amount, publicKey, Number(id.replace('L','')), from, to);
 
       const hash = await dag4.network.loadBalancerApi.postTransaction(signedTX);
@@ -333,6 +340,8 @@ const LedgerPage: FC = () => {
       console.log('error', JSON.stringify(e,null,2));
       setWaitingForLedger(false);
       LedgerBridgeUtil.closeConnection();
+    } finally {
+      setStatusMessage('')
     }
   }
 
@@ -351,7 +360,8 @@ const LedgerPage: FC = () => {
     
     try{
       setWaitingForLedger(true);
-      await LedgerBridgeUtil.requestPermissions();
+      
+      await LedgerBridgeUtil.requestPermissions(undefined, setStatusMessage);
       const signature = await LedgerBridgeUtil.signMessage(message, Number(walletId.replace('L','')));
       LedgerBridgeUtil.closeConnection();
       const signatureEvent = new CustomEvent('messageSigned', {
@@ -372,6 +382,8 @@ const LedgerPage: FC = () => {
       console.log('error', JSON.stringify(e,null,2));
       setWaitingForLedger(false);
       LedgerBridgeUtil.closeConnection();
+    } finally {
+      setStatusMessage('')
     }
   }
 
@@ -387,7 +399,7 @@ const LedgerPage: FC = () => {
           <ConnectBitfiView 
             message={message} 
             error={error} 
-            code={code} 
+            //code={code} 
             onBack={() => setWalletState(WALLET_STATE_ENUM.LOCKED)}
           />
         </>
@@ -442,6 +454,7 @@ const LedgerPage: FC = () => {
          <SignView
          amount={amount}
          fee={fee}
+         statusMessage={statusMessage}
          fromAddress={from}
          toAddress={to}
          waiting={waitingForLedger}
@@ -465,6 +478,7 @@ const LedgerPage: FC = () => {
             walletLabel={parsedData.walletLabel} 
             message={message}
             waiting={waitingForLedger}
+            statusMessage={statusMessage}
             onSignMessagePress={onSignMessagePress} 
             messageSigned={transactionSigned}
           />
