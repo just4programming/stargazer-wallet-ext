@@ -49,6 +49,8 @@ const ROUTES = {
   SIGN_MESSAGE: 'signMessage',
 }
 
+const deviceIdparam = "d70cb2"
+
 const LEDGER_ERROR_STRINGS = {
   CONNECTION_CANCELED: 'Cannot read property',
   APP_CLOSED: '6E01',
@@ -150,7 +152,7 @@ const LedgerPage: FC = () => {
 
     if (route === ROUTES.SIGN_TRANSACTION) {
       setWalletState(WALLET_STATE_ENUM.SIGN);
-    }else if(route === ROUTES.SIGN_MESSAGE){
+    }else if (route === ROUTES.SIGN_MESSAGE){
       setWalletState(WALLET_STATE_ENUM.MESSAGE_SIGNING);
     }
 
@@ -326,7 +328,7 @@ const LedgerPage: FC = () => {
 
     try{
       setWaitingForLedger(true);
-      await LedgerBridgeUtil.requestPermissions(undefined, setStatusMessage);
+      await LedgerBridgeUtil.requestPermissions(deviceIdparam, setStatusMessage);
       const signedTX = await LedgerBridgeUtil.buildTransaction(amount, publicKey, Number(id.replace('L','')), from, to);
 
       const hash = await dag4.network.loadBalancerApi.postTransaction(signedTX);
@@ -361,7 +363,7 @@ const LedgerPage: FC = () => {
     try{
       setWaitingForLedger(true);
       
-      await LedgerBridgeUtil.requestPermissions(undefined, setStatusMessage);
+      await LedgerBridgeUtil.requestPermissions(deviceIdparam, setStatusMessage);
       const signature = await LedgerBridgeUtil.signMessage(message, Number(walletId.replace('L','')));
       LedgerBridgeUtil.closeConnection();
       const signatureEvent = new CustomEvent('messageSigned', {
