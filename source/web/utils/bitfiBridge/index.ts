@@ -65,17 +65,15 @@ class BitfiBridgeUtil {
       amount: amountSat,
       symbol: 'dag',
       fee: feeSat, 
-      index: index || 0,
+      index: /*index ||*/ 0,
       lastTxRef,
       transferType: TransferType.OUT_SELF,
     }, APPROVE_TIMEOUT_MSEC)
 
-    
-    if (!fee || fee === 0) {
+    if (tx.edge.data.fee == "0") {
       delete tx.edge.data.fee
     }
 
-   
     if (tx.edge.data.amount !== amountSat || (tx.edge.data.fee && tx.edge.data.fee !== feeSat)) {
       throw new Error('Transaction was formed incorrectly')
     }
